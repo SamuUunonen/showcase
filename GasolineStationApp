@@ -1,0 +1,655 @@
+import java.awt.Color;
+import java.awt.Cursor;
+import java.awt.EventQueue;
+import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionAdapter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JProgressBar;
+import javax.swing.JSlider;
+import javax.swing.JTextField;
+import javax.swing.SwingConstants;
+import javax.swing.Timer;
+import javax.swing.border.LineBorder;
+
+
+public class GasolinePumpApp extends JFrame {
+
+	private JPanel contentPane;
+	private JButton btnB95;
+	private JButton btnB98;
+	private JButton btnDiesel;
+	private JSlider slider;
+	private JTextField textSlideBar;
+	private JTextField textLitres;
+	private JTextField text95Price;
+	private JLabel lbl95;
+	private JLabel lbl98;
+	private JTextField text98Price;
+	private JLabel lblDiesel;
+	private JTextField textDieselPrice;
+	private JLabel lblTitle;
+	private JButton btn20Shortcut;
+	private JButton btn40Shortcut;
+	private JButton btn60Shortcut;
+	private JButton btn100Shortcut;
+	private JButton btnReceipt;
+	private JButton btnExit;
+	private JProgressBar progressBar;
+	private JButton btnStart;
+	private JButton btnStop;
+	
+	private Timer timer;
+	private String litres;
+	private double count;
+	
+	
+	
+
+	/**
+	 * Launch the application.
+	 */
+	public static void main(String[] args) {
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					GasolinePumpApp frame = new GasolinePumpApp();
+					frame.setVisible(true);
+				} catch (Exception e) {
+					
+				}
+			}
+		});
+	}
+
+	/**
+	 * Create the frame.
+	 * 
+	 * 1.	LABELS
+	 * 2.	FUEL PRICE BOXES
+	 * 3.	FUEL TYPE BUTTONS
+	 * 4.	MONEY SELETORS
+	 * 5.	FUELING
+	 * 6.	AFTER FUELING
+	 * 7.	CUSTOM METHODS
+	 *
+	 */
+	public GasolinePumpApp() {
+		setTitle("Gasoline Station");
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setBounds(100, 100, 800, 600);
+		contentPane = new JPanel();
+		contentPane.setBackground(new Color(0, 128, 128));
+		contentPane.setVisible(true);
+		contentPane.setBorder(new LineBorder(new Color(0, 0, 0), 7));
+		setContentPane(contentPane);
+		contentPane.setLayout(null);
+		
+		
+		//	1 * LABELS *
+		
+		lblTitle = new JLabel("Java Gasoline Station");
+		lblTitle.setForeground(Color.ORANGE);
+		lblTitle.setHorizontalAlignment(SwingConstants.CENTER);
+		lblTitle.setFont(new Font("Tahoma", Font.BOLD, 38));
+		lblTitle.setBounds(50, 13, 423, 45);
+		contentPane.add(lblTitle);
+		
+		lbl95 = new JLabel("95 E10");
+		lbl95.setForeground(Color.ORANGE);
+		lbl95.setHorizontalAlignment(SwingConstants.CENTER);
+		lbl95.setFont(new Font("Tahoma", Font.BOLD, 18));
+		lbl95.setBounds(111, 60, 90, 30);
+		contentPane.add(lbl95);
+		
+		lbl98 = new JLabel("98 E5");
+		lbl98.setForeground(Color.ORANGE);
+		lbl98.setHorizontalAlignment(SwingConstants.CENTER);
+		lbl98.setFont(new Font("Tahoma", Font.BOLD, 18));
+		lbl98.setBounds(213, 60, 90, 30);
+		contentPane.add(lbl98);
+		
+		lblDiesel = new JLabel("Diesel");
+		lblDiesel.setForeground(Color.ORANGE);
+		lblDiesel.setHorizontalAlignment(SwingConstants.CENTER);
+		lblDiesel.setFont(new Font("Tahoma", Font.BOLD, 18));
+		lblDiesel.setBounds(315, 60, 90, 30);
+		contentPane.add(lblDiesel);
+		
+		
+		//	2 ** FUEL PRICE BOXES **
+		
+		text95Price = new JTextField();
+		text95Price.setVisible(true);
+		text95Price.setBackground(new Color(255, 255, 255));
+		text95Price.setFont(new Font("Tahoma", Font.BOLD, 20));
+		text95Price.setHorizontalAlignment(SwingConstants.CENTER);
+		text95Price.setText("1.329");
+		text95Price.setBounds(111, 100, 90, 30);
+		contentPane.add(text95Price);
+		text95Price.setColumns(10);
+		
+		text98Price = new JTextField();
+		text98Price.setVisible(true);
+		text98Price.setText("1.389");
+		text98Price.setHorizontalAlignment(SwingConstants.CENTER);
+		text98Price.setFont(new Font("Tahoma", Font.BOLD, 20));
+		text98Price.setColumns(10);
+		text98Price.setBackground(Color.WHITE);
+		text98Price.setBounds(213, 100, 90, 30);
+		contentPane.add(text98Price);
+		
+		textDieselPrice = new JTextField();
+		textDieselPrice.setVisible(true);
+		textDieselPrice.setText("1.229");
+		textDieselPrice.setHorizontalAlignment(SwingConstants.CENTER);
+		textDieselPrice.setFont(new Font("Tahoma", Font.BOLD, 20));
+		textDieselPrice.setColumns(10);
+		textDieselPrice.setBackground(Color.WHITE);
+		textDieselPrice.setBounds(315, 100, 90, 30);
+		contentPane.add(textDieselPrice);
+		
+		
+		// 	3 *** FUEL TYPE BUTTONS ***
+		
+		btnB95 = new JButton("95 E10");
+		btnB95.setVisible(true);
+		btnB95.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseReleased(MouseEvent arg0) {
+				fuelTypeButtonsVisible(1);		//	Set fueltype parameters
+			}
+		});
+		btnB95.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		btnB95.setBorder(new LineBorder(new Color(0, 0, 0), 3));
+		btnB95.setBackground(new Color(50, 205, 50));
+		btnB95.setFont(new Font("Tahoma", Font.BOLD, 25));
+		btnB95.setBounds(550, 50, 180, 150);
+		contentPane.add(btnB95);
+		
+		btnB98 = new JButton("98 E5");
+		btnB98.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseReleased(MouseEvent arg0) {
+				fuelTypeButtonsVisible(2);		//	Set fueltype parameters
+			}
+		});
+		btnB98.setVisible(true);
+		btnB98.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		btnB98.setFont(new Font("Tahoma", Font.BOLD, 25));
+		btnB98.setBorder(new LineBorder(new Color(0, 0, 0), 3));
+		btnB98.setBackground(new Color(50, 205, 50));
+		btnB98.setBounds(550, 210, 180, 150);
+		contentPane.add(btnB98);
+		
+		btnDiesel = new JButton("Diesel");
+		btnDiesel.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseReleased(MouseEvent arg0) {
+				fuelTypeButtonsVisible(3);		//	Set fueltype parameters
+			}
+		});
+		btnDiesel.setVisible(true);
+		btnDiesel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		btnDiesel.setFont(new Font("Tahoma", Font.BOLD, 25));
+		btnDiesel.setBorder(new LineBorder(new Color(0, 0, 0), 3));
+		btnDiesel.setBackground(new Color(255, 255, 0));
+		btnDiesel.setBounds(550, 370, 180, 150);
+		contentPane.add(btnDiesel);
+		
+		
+
+		
+		//	4 **** MONEY SELECTORS ****
+		
+		slider = new JSlider();
+		slider.setForeground(Color.WHITE);
+		slider.setBackground(new Color(0, 128, 128));
+		slider.addMouseMotionListener(new MouseMotionAdapter() {
+			@Override
+			public void mouseDragged(MouseEvent arg0) {
+				textSlideBar.setText(Integer.toString(slider.getValue())+ " €");
+				litres = Double.toString(fuelType());
+				textLitres.setText(litres + " l");
+				startButtonVisible(slider.getValue());
+			}
+		});
+		slider.setValue(0);
+		slider.setVisible(false);
+		slider.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mousePressed(MouseEvent arg0) {
+				textSlideBar.setText(Integer.toString(slider.getValue())+ " €");
+				litres = Double.toString(fuelType());
+				textLitres.setText(litres + " l");
+				startButtonVisible(slider.getValue());
+			}
+		});
+		slider.setValueIsAdjusting(true);
+		slider.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		slider.setBounds(50, 200, 450, 45);
+		contentPane.add(slider);
+		
+		btn20Shortcut = new JButton("20 \u20AC");
+		btn20Shortcut.setVisible(false);
+		btn20Shortcut.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseReleased(MouseEvent arg0) {
+				priceActions(20);
+			}
+		});
+		btn20Shortcut.setFont(new Font("Tahoma", Font.BOLD, 20));
+		btn20Shortcut.setBounds(50, 143, 97, 45);
+		contentPane.add(btn20Shortcut);
+		
+		btn40Shortcut = new JButton("40 \u20AC");
+		btn40Shortcut.setVisible(false);
+		btn40Shortcut.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseReleased(MouseEvent arg0) {
+				priceActions(40);
+			}
+		});
+		btn40Shortcut.setFont(new Font("Tahoma", Font.BOLD, 20));
+		btn40Shortcut.setBounds(159, 143, 97, 45);
+		contentPane.add(btn40Shortcut);
+		
+		btn60Shortcut = new JButton("60 \u20AC");
+		btn60Shortcut.setVisible(false);
+		btn60Shortcut.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseReleased(MouseEvent arg0) {
+				priceActions(60);
+			}
+		});
+		btn60Shortcut.setFont(new Font("Tahoma", Font.BOLD, 20));
+		btn60Shortcut.setBounds(268, 143, 97, 45);
+		contentPane.add(btn60Shortcut);
+		
+		btn100Shortcut = new JButton("100 \u20AC");
+		btn100Shortcut.setVisible(false);
+		btn100Shortcut.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseReleased(MouseEvent arg0) {
+				priceActions(100);
+			}
+		});
+		btn100Shortcut.setFont(new Font("Tahoma", Font.BOLD, 20));
+		btn100Shortcut.setBounds(376, 143, 97, 45);
+		contentPane.add(btn100Shortcut);
+		
+				//	Textbox for slider
+		textSlideBar = new JTextField();
+		textSlideBar.setText("0 €");
+		textSlideBar.setBackground(new Color(240, 230, 140));
+		textSlideBar.setHorizontalAlignment(SwingConstants.CENTER);
+		textSlideBar.setFont(new Font("Tahoma", Font.BOLD, 25));
+		textSlideBar.setBounds(280, 258, 125, 50);
+		contentPane.add(textSlideBar);
+		textSlideBar.setColumns(10);
+		
+				//	Textbox for litres
+		textLitres = new JTextField();
+		textLitres.setText("0.00 l");
+		textLitres.setHorizontalAlignment(SwingConstants.CENTER);
+		textLitres.setFont(new Font("Tahoma", Font.BOLD, 25));
+		textLitres.setColumns(10);
+		textLitres.setBackground(new Color(240, 230, 140));
+		textLitres.setBounds(280, 321, 125, 50);
+		contentPane.add(textLitres);
+		
+		
+		
+		//	5 ***** FUELING *****
+		
+		btnStart = new JButton("Start");
+		btnStart.setVisible(false);
+		btnStart.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseReleased(MouseEvent arg0) {
+				btnStart.setVisible(false);
+				priceButtonsVisible(false);
+				progressBar.setVisible(true);
+				btnStop.setVisible(true);
+				timer = new Timer(50, new ActionListener() {
+	                @Override
+	                public void actionPerformed(ActionEvent e) {
+	                	NumberFormat countFormat = new DecimalFormat("#0.00");
+	                	String formattedCount;
+	                	double stopCount = fuelType();
+	                	double slowDownCount = fuelType() -0.5;
+	                    formattedCount = countFormat.format(count);
+	                    progressBar.setMaximum((int) stopCount);
+	                    progressBar.setValue((int) count);
+	                    
+	                    if (count > slowDownCount && count < stopCount)
+	                    {
+	                    	timer.setDelay(25);
+	                    	count = count + 0.01;
+	                    	textLitres.setText(formattedCount + " l");
+	                    }
+	                    else if (count < slowDownCount)
+	                    {
+	                    	count = count + 0.5;
+	                        textLitres.setText(formattedCount + " l");
+	                    }
+	                    else 
+	                    {
+	                    	((Timer)(e.getSource())).stop();
+	                    	btnReceipt.setVisible(true);
+	                    	btnStart.setVisible(false);
+	                    	btnStop.setVisible(false);
+	                    }
+	                }
+	            });
+	            timer.setInitialDelay(0);
+	            timer.start();
+			}
+		});
+		btnStart.setFont(new Font("Tahoma", Font.BOLD, 40));
+		btnStart.setBackground(Color.GREEN);
+		btnStart.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		btnStart.setBounds(50, 258, 151, 113);
+		contentPane.add(btnStart);
+		
+		
+		btnStop = new JButton("STOP");
+		btnStop.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseReleased(MouseEvent arg0) {
+				timer.stop();
+				btnStart.setVisible(true);
+				btnReceipt.setVisible(true);
+			}
+		});
+		btnStop.setVisible(false);
+		btnStop.setBackground(Color.RED);
+		btnStop.setFont(new Font("Tahoma", Font.BOLD, 40));
+		btnStop.setBounds(50, 258, 151, 113);
+		contentPane.add(btnStop);
+		
+		progressBar = new JProgressBar(0, 100);
+		progressBar.setValue(0);
+		progressBar.setBackground(new Color(255, 228, 181));
+		progressBar.setFont(new Font("Tahoma", Font.BOLD, 20));
+		progressBar.setForeground(new Color(105, 105, 105));
+		progressBar.setVisible(false);
+		progressBar.setBounds(50, 392, 450, 50);
+		progressBar.setStringPainted(true);
+		contentPane.add(progressBar);
+		
+		
+		
+		// 6 ****** AFTER FUELING ******
+		
+		btnReceipt = new JButton("RECEIPT");
+		btnReceipt.setVisible(false);
+		btnReceipt.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseReleased(MouseEvent arg0) {
+				printReceipt();
+				restart();
+			}
+		});
+		btnReceipt.setBackground(new Color(0, 255, 0));
+		btnReceipt.setFont(new Font("Tahoma", Font.BOLD, 30));
+		btnReceipt.setBounds(50, 460, 219, 60);
+		contentPane.add(btnReceipt);
+		
+		btnExit = new JButton("EXIT");
+		btnExit.setVisible(false);
+		btnExit.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseReleased(MouseEvent arg0) {
+				restart();
+			}
+		});
+		btnExit.setBackground(new Color(255, 0, 0));
+		btnExit.setFont(new Font("Tahoma", Font.BOLD, 30));
+		btnExit.setBounds(281, 460, 219, 60);
+		contentPane.add(btnExit);
+		
+		
+	}	// End of GUI
+	
+	
+	
+	/*	
+	  		***************************
+			**** 7  Custom methods ****
+			***************************
+			* 7.1	fuelTypeButtonsEnabled
+			* 7.2	priceButtonsVisible
+			* 7.3	priceActions
+			* 7.4	litreCalculator
+			* 7.5	fuelType
+			* 7.6	startButtonEnabled
+			* 7.7	printReceipt
+			* 7.8	stationTitle
+			* 7.9	restart
+	*/
+	
+	
+			//	Set things after user has selected fuel type. 1 = 95, 2 = 98, 3 = Diesel
+		private void fuelTypeButtonsVisible(int selection)
+		{
+			switch (selection)
+			{
+			case 1:		//	95 E10
+				btnB95.setBorder(new LineBorder(new Color(0, 0, 0), 8));
+				btnB95.setVisible(true);
+				btnB98.setVisible(false);
+				btnDiesel.setVisible(false);
+				text98Price.setVisible(false);
+				textDieselPrice.setVisible(false);
+				break;
+			case 2:		//	98 E5
+				btnB98.setBorder(new LineBorder(new Color(0, 0, 0), 8));
+				btnB95.setVisible(false);
+				btnB98.setVisible(true);
+				btnDiesel.setVisible(false);
+				text95Price.setVisible(false);
+				textDieselPrice.setVisible(false);
+				break;
+			case 3:		//	Diesel
+				btnDiesel.setBorder(new LineBorder(new Color(0, 0, 0), 8));
+				btnB95.setVisible(false);
+				btnB98.setVisible(false);
+				btnDiesel.setVisible(true);
+				text95Price.setVisible(false);
+				text98Price.setVisible(false);
+				break;
+			}	//	End of switch statement
+			btnExit.setVisible(true);
+			priceButtonsVisible(true);
+		}
+	
+	
+			//	Set money selection visible. true = visible, false = hidden.
+		private void priceButtonsVisible(boolean visible)
+		{
+			//
+			if (visible)
+			{
+				slider.setVisible(true);
+				btn20Shortcut.setVisible(true);
+				btn40Shortcut.setVisible(true);
+				btn60Shortcut.setVisible(true);
+				btn100Shortcut.setVisible(true);
+			}
+			else if (visible == false)
+			{
+				slider.setVisible(false);
+				btn20Shortcut.setVisible(false);
+				btn40Shortcut.setVisible(false);
+				btn60Shortcut.setVisible(false);
+				btn100Shortcut.setVisible(false);
+			}
+		}
+	
+		
+			// Set value for textSlideBar and textLitres
+		private void priceActions(int shortcutBtn)
+		{
+			slider.setValue(shortcutBtn);
+			textSlideBar.setText(Integer.toString(slider.getValue())+ " €");
+			litres = Double.toString(fuelType());
+			textLitres.setText(litres + " l");
+			startButtonVisible(slider.getValue());
+		}
+		
+	
+			//	Calculate litres. 
+		private String litreCalculator(double money, double fuelPrice)
+		{
+			NumberFormat formatter = new DecimalFormat("#0.00");
+			double litres;
+			String litreFormatted;
+			
+			litres = money / fuelPrice;
+			litreFormatted = formatter.format(litres);
+			return litreFormatted;
+		}
+		
+		
+			//	Method to set fuel price for litreCalculator.	FINAL
+		private double fuelType()
+		{
+			if (btnB95.isVisible())
+			{
+				litres = litreCalculator(slider.getValue(), Double.parseDouble(text95Price.getText()));
+			}
+			else if (btnB98.isVisible())
+			{
+				litres = litreCalculator(slider.getValue(), Double.parseDouble(text98Price.getText()));
+			}
+			else if (btnDiesel.isVisible())
+			{
+				litres = litreCalculator(slider.getValue(), Double.parseDouble(textDieselPrice.getText()));
+			}
+			return Double.parseDouble(litres);
+		}
+		
+		
+			// Enable start button.
+		private void startButtonVisible(double price)
+		{
+			if (price > 0)
+			{
+				btnStart.setVisible(true);
+			}
+			else if (price == 0)
+			{
+				btnStart.setVisible(false);
+			}
+		}
+		
+		
+			//	Print receipt in textfile
+		private void printReceipt()
+		{
+			try {
+				DateTimeFormatter dtfWriter = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss"); 
+				DateTimeFormatter dtfFileName = DateTimeFormatter.ofPattern("HH_mm_ss");
+				LocalDateTime now = LocalDateTime.now(); 
+				
+				String dateTime = dtfFileName.format(now) + ".txt";
+				FileWriter writer = new FileWriter ("c:/users/samuHAMK/Documents/GasolineReceipts/" + dateTime);
+				
+				writer.write(stationTitle());
+				
+				if (btnB95.isVisible())		//	95 E10
+				{
+					writer.write("Date: " + dtfWriter.format(now) + "\r\n");
+					writer.write("Gasoline type: " + btnB95.getText() + "\r\n");
+					writer.write("Price / liter: " + text95Price.getText() + " €" + "\r\n");
+					writer.write("Total liters: " + textLitres.getText() + "\r\n");
+					writer.write("Total sum: " + textSlideBar.getText() + "\r\n");
+				}
+				else if (btnB98.isVisible())		//	98 E5
+				{
+					writer.write("Date: " + dtfWriter.format(now) + "\r\n");
+					writer.write("Gasoline type: " + btnB98.getText() + "\r\n");
+					writer.write("Price / liter: " + text98Price.getText() + " €" + "\r\n");
+					writer.write("Total liters: " + textLitres.getText() + "\r\n");
+					writer.write("Total sum: " + textSlideBar.getText() + "\r\n");
+				}
+				else if	(btnDiesel.isVisible())//	Diesel
+				{
+					writer.write("Date: " + dtfWriter.format(now) + "\r\n");
+					writer.write("Gasoline type: " + btnDiesel.getText() + "\r\n");
+					writer.write("Price / liter: " + textDieselPrice.getText() + " €" + "\r\n");
+					writer.write("Total liters: " + textLitres.getText() + "\r\n");
+					writer.write("Total sum: " + textSlideBar.getText());
+				}	//	End of switch statement
+				
+				writer.write("\n\n"
+						+ "----------------------------------- \n"
+						+ "----------------------------------- \n\n\n");
+				writer.close();	
+				
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			
+		}
+		
+		
+			// Title for receipt
+		private String stationTitle()
+		{
+			String line1;
+			line1 = "*********************************** \n"
+					+ "****** " + lblTitle.getText() + " ****** \n"
+					+ "*********************************** \n\n";
+			return line1;
+		}
+		
+		
+			// Reset everything and start from beginning.
+		private void restart()
+		{
+			btnB95.setVisible(true);
+			btnB98.setVisible(true);
+			btnDiesel.setVisible(true);
+			text95Price.setVisible(true);
+			text98Price.setVisible(true);
+			textDieselPrice.setVisible(true);
+			btn20Shortcut.setVisible(false);
+			btn40Shortcut.setVisible(false);
+			btn60Shortcut.setVisible(false);
+			btn100Shortcut.setVisible(false);
+			slider.setVisible(false);
+			slider.setValue(0);
+			progressBar.setVisible(false);
+			progressBar.setValue(0);
+			btnExit.setVisible(false);
+			btnReceipt.setVisible(false);
+			btnStart.setVisible(false);
+			btnStop.setVisible(false);
+			textSlideBar.setText("0 €");
+			textLitres.setText("0.00 l");
+			btnB95.setBorder(new LineBorder(new Color(0, 0, 0), 3));
+			btnB98.setBorder(new LineBorder(new Color(0, 0, 0), 3));
+			btnDiesel.setBorder(new LineBorder(new Color(0, 0, 0), 3));
+			count = 0;
+		}
+}	//	End of GasolinePumpApp
+
+
+
+
